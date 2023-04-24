@@ -15,6 +15,11 @@ return new class extends Migration
     {
         Schema::create('post_metas', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('post_id'); // FK
+            $table->string('meta_description');
+            $table->string('meta_keywords');
+            $table->string('meta_robots');
+            $table->foreign('post_id')->references('id')->on('posts')->onDelete('cascade');
             $table->timestamps();
         });
     }
