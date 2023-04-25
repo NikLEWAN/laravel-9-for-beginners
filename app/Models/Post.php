@@ -10,6 +10,7 @@ class Post extends Model
     use HasFactory;
 
     protected $fillable = [
+		'user_id',
         'title',
         'excerpt',
         'body',
@@ -27,4 +28,9 @@ class Post extends Model
     {
         return $this->hasOne(PostMeta::class);
     }
+
+	public function categories()
+	{
+		return $this->belongsToMany(Category::class);
+	}
 }

@@ -5,6 +5,21 @@
         name="viewport"
         content="width=device-width, initial-scale=1.0"
     />
+	<meta
+		name="description"
+		content="{{ $post->meta->meta_description ?? '' }}"
+
+	/>
+	<meta
+		name="keywords"
+		content="{{ $post->meta->meta_keywords ?? '' }}"
+
+	/>
+	<meta
+		name="robots"
+		content="{{ $post->meta->meta_robots ?? '' }}"
+
+	/>
     <meta
         http-equiv="X-UA-Compatible"
         content="ie=edge"
@@ -30,7 +45,12 @@
             {{ $post->title }}
         </h4>
 
-        {{ dd($post->meta) }}
+		<p class="pt-4 italic">
+			Categories:
+			@foreach ( $post->categories as $category )
+				{{ $category->name }}{{ $loop->last ? '' : ', ' }}
+			@endforeach
+		</p>
 
         <div class="block lg:flex flex-row">
             <div class="basis-9/12 text-center sm:block sm:text-left">

@@ -10,9 +10,16 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\PostFormRequest;
+use Illuminate\Support\Facades\Auth;
+use App\Models\PostMeta;
 
 class PostsController extends Controller
 {
+	public function __construct()
+	{
+		$this->middleware('auth')->except(['index', 'show']);
+		// $this->middleware('auth')->only(['create', 'store', 'edit', 'update', 'destroy']);
+	}
     /**
      * Display a listing of the resource.
      *
@@ -56,11 +63,12 @@ class PostsController extends Controller
         // $post->min_to_read = $request->min_to_read;
         // $post->save();
 
-        //Validation 
+        //Validation
         $request->validated();
 
         // Eloquent
-        Post::create([
+        $post = Post::create([
+			'user_id' => Auth::id(),
             'title' => $request->title,
             'excerpt' => $request->excerpt,
             'body' => $request->body,
@@ -68,6 +76,13 @@ class PostsController extends Controller
             'is_published' => $request->is_published === 'on',
             'min_to_read' => $request->min_to_read
         ]);
+
+		$post->meta()->create([
+			'post_id' => $post->id,
+			'meta_description' => $request->meta_description,
+			'meta_keywords' => $request->meta_keywords,
+			'meta_robots' => $request->meta_robots,
+		]);
 
         return redirect()->route('blog.index');
     }
@@ -98,7 +113,7 @@ class PostsController extends Controller
         ]);
         //$post = Post::where('id', $id)->get();
 
-        
+
     }
 
     /**
@@ -119,7 +134,14 @@ class PostsController extends Controller
         }
 
         Post::where('id', $id)->update($request->except([
-            '_token', '_method'
+            '_token', '_method', 'meta_description', 'meta_keywords', 'meta_robots'
+        ]));
+
+		PostMeta::where('post_id', $id)->updateOrCreate(([
+			'post_id' => $id,
+            'meta_description' => $request->meta_description,
+			'meta_keywords' => $request->meta_keywords,
+			'meta_robots' => $request->meta_robots,
         ]));
 
         return redirect()->route('blog.index');
@@ -144,7 +166,7 @@ class PostsController extends Controller
             // ]);
 
             $image = $request->file('image');
-            $name = $image->getClientOriginalName();
+            $name = time().$image->getClientOriginalName();
             $image->move(public_path('images/posts'), $name);
 
             return $name;

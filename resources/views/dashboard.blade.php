@@ -14,10 +14,10 @@
             </div>
 
             <div>
-                <h1 class="text-xl font-bold pt-8 pb-2">Posts of: {{ Auth::user()-name }}</h1>
+                <h1 class="text-xl font-bold pt-8 pb-2">Posts of: {{ Auth::user()->name }}</h1>
 
                 @foreach ( Auth::user()->posts as $post)
-                    <h2>{{ $post->title }}</h2> 
+                    <h2>{{ $post->title }}</h2>
                 @endforeach
             </div>
 
