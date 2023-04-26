@@ -87,7 +87,7 @@
                     id="image"
                     type="file"
                     accept="image/*"
-                    name="image_path"
+                    name="image"
                     class="hidden">
                 <img src="{{ $post->image_path != "" ? url("images/posts/$post->image_path") : '' }}" alt="" id="preview">
             </label>

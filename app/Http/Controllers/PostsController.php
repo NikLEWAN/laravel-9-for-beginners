@@ -127,15 +127,24 @@ class PostsController extends Controller
     {
         $request->validated();
 
-        if($request->hasFile('image_path')){
-            $request->merge([
-                'image_path' => $this->storeImage($request)
-            ]);
-        }
+        // if($request->hasFile('image_path')){
+        //     $request->merge([
+        //         'image_path' => $this->storeImage($request)
+        //     ]);
+        // }
 
-        Post::where('id', $id)->update($request->except([
-            '_token', '_method', 'meta_description', 'meta_keywords', 'meta_robots'
-        ]));
+        // Post::where('id', $id)->update($request->except([
+        //     '_token', '_method', 'meta_description', 'meta_keywords', 'meta_robots'
+        // ]));
+        Post::where('id', $id)->update([
+			'user_id' => Auth::id(),
+            'title' => $request->title,
+            'excerpt' => $request->excerpt,
+            'body' => $request->body,
+            'image_path' => $this->storeImage($request),
+            'is_published' => $request->is_published === 'on',
+            'min_to_read' => $request->min_to_read
+        ]);
 
 		PostMeta::where('post_id', $id)->updateOrCreate(([
 			'post_id' => $id,
@@ -144,7 +153,7 @@ class PostsController extends Controller
 			'meta_robots' => $request->meta_robots,
         ]));
 
-        return redirect()->route('blog.index');
+        //return redirect()->route('blog.index');
     }
 
     /**
